@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CRUD Usuarios{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1><a href="{{ url_for('usuarios.index') }}">Gestión de Usuarios</a></h1>
+            <div>
+                {% if session.get('usuario_id') %}
+                    <a href="{{ url_for('usuarios.crear') }}" class="btn btn-primary">Nuevo Usuario</a>
+                    <a href="{{ url_for('usuarios.logout') }}" class="btn btn-secondary">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{{ url_for('usuarios.login') }}" class="btn btn-primary">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Sistema de Gestión de Usuarios</p>
+    </footer>
+</body>
+</html>
