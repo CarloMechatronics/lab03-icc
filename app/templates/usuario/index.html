@@ -15,9 +15,7 @@
             <th>Nombre</th>
             <th>Email</th>
             <th>Rol</th>
-            {% if session.get('usuario_id') %}
-            <th>Acciones</th>
-            {% endif %}
+            <th>Acciones</th>  {# <- SIEMPRE visible porque "Ver" es público #}
         </tr>
     </thead>
     <tbody>
@@ -27,28 +25,26 @@
             <td>{{ u.nombre }}</td>
             <td>{{ u.email }}</td>
             <td>{{ u.rol }}</td>
-            {% if session.get('usuario_id') %}
             <td class="actions">
-                {# Si vas a implementar detalle:
-                <a href="{{ url_for('usuarios.ver', id=u.id) }}" class="btn btn-info btn-sm">Ver</a>
-                #}
+              <a href="{{ url_for('usuarios.ver', id=u.id) }}" class="btn btn-info btn-sm">Ver</a>
+              {% if session.get('usuario_id') %}
                 <a href="{{ url_for('usuarios.editar', id=u.id) }}" class="btn btn-warning btn-sm">Editar</a>
                 <form action="{{ url_for('usuarios.eliminar', id=u.id) }}" method="POST" style="display:inline;"
                       onsubmit="return confirm('¿Eliminar este usuario?');">
-                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                  <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                 </form>
+              {% endif %}
             </td>
-            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% else %}
 <div class="alert alert-info">
-    No hay usuarios registrados.
-    {% if session.get('usuario_id') %}
-      <a href="{{ url_for('usuarios.crear') }}">Crear el primero</a>
-    {% endif %}
+  No hay usuarios registrados.
+  {% if session.get('usuario_id') %}
+    <a href="{{ url_for('usuarios.crear') }}">Crear el primero</a>
+  {% endif %}
 </div>
 {% endif %}
 {% endblock %}

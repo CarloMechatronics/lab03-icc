@@ -43,6 +43,16 @@ def admin_panel():
     # (Necesita templates/admin_panel.html en la raíz de templates)
     return render_template("admin_panel.html", usuarios=usuarios)
 
+@usuario_bp.route("/usuarios/<int:id>")
+def ver(id):
+    """Detalle de usuario (lectura pública)"""
+    usuario = usuario_service.obtener(id)
+    if not usuario:
+        flash("Usuario no encontrado", "error")
+        return redirect(url_for("usuarios.index"))
+    return render_template("usuario/ver.html", usuario=usuario)
+
+
 @usuario_bp.route("/usuarios/crear", methods=["GET", "POST"])
 def crear():
     if "usuario_id" not in session:
