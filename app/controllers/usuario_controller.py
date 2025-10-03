@@ -18,6 +18,7 @@ def login():
             return redirect(url_for("usuarios.admin_panel"))
         else:
             flash("Credenciales inválidas", "error")
+    # (Necesita templates/login.html)
     return render_template("login.html")
 
 @usuario_bp.route("/logout")
@@ -26,11 +27,12 @@ def logout():
     flash("Sesión cerrada", "success")
     return redirect(url_for("usuarios.index"))
 
-# ---- CRUD ----
+# ---- CRUD (lectura pública; resto con login) ----
 @usuario_bp.route("/usuarios")
 def index():
     usuarios = usuario_service.listar()
-    return render_template("usuario/list.html", usuarios=usuarios)
+    # EXISTE: templates/usuario/index.html
+    return render_template("usuario/index.html", usuarios=usuarios)
 
 @usuario_bp.route("/usuarios/admin")
 def admin_panel():
@@ -38,9 +40,10 @@ def admin_panel():
         flash("Debes iniciar sesión", "error")
         return redirect(url_for("usuarios.login"))
     usuarios = usuario_service.listar()
-    return render_template("usuario/admin_panel.html", usuarios=usuarios)
+    # (Necesita templates/admin_panel.html en la raíz de templates)
+    return render_template("admin_panel.html", usuarios=usuarios)
 
-@usuario_bp.route("/usuarios/crear", methods=["GET","POST"])
+@usuario_bp.route("/usuarios/crear", methods=["GET", "POST"])
 def crear():
     if "usuario_id" not in session:
         flash("Acceso restringido", "error")
@@ -53,11 +56,12 @@ def crear():
             flash("Usuario creado", "success")
             return redirect(url_for("usuarios.admin_panel"))
         else:
-            for e in resultado["errores"]:
+            for e in resultado.get("errores", []):
                 flash(e, "error")
-    return render_template("usuario/create.html")
+    # EXISTE: templates/usuario/crear.html
+    return render_template("usuario/crear.html")
 
-@usuario_bp.route("/usuarios/editar/<int:id>", methods=["GET","POST"])
+@usuario_bp.route("/usuarios/editar/<int:id>", methods=["GET", "POST"])
 def editar(id):
     if "usuario_id" not in session:
         flash("Acceso restringido", "error")
@@ -74,7 +78,11 @@ def editar(id):
         if resultado["success"]:
             flash("Usuario actualizado", "success")
             return redirect(url_for("usuarios.admin_panel"))
-    return render_template("usuario/edit.html", usuario=usuario)
+        else:
+            for e in resultado.get("errores", []):
+                flash(e, "error")
+    # EXISTE: templates/usuario/editar.html
+    return render_template("usuario/editar.html", usuario=usuario)
 
 @usuario_bp.route("/usuarios/eliminar/<int:id>", methods=["POST"])
 def eliminar(id):

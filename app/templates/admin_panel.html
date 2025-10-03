@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Panel de Administración | CRUD Usuarios{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h2>Panel de Administración</h2>
+    <p>Gestiona los usuarios del sistema.</p>
+  </div>
+
+  {% if usuarios and usuarios|length > 0 %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th style="width: 220px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+          <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.nombre }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.rol }}</td>
+            <td>
+              <div class="actions">
+                <a class="btn btn-warning btn-sm" href="{{ url_for('usuarios.editar', id=u.id) }}">Editar</a>
+                <form method="post" action="{{ url_for('usuarios.eliminar', id=u.id) }}" onsubmit="return confirm('¿Eliminar este usuario?');">
+                  <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    No hay usuarios registrados. <a href="{{ url_for('usuarios.crear') }}">Crear el primero</a>
+  {% endif %}
+{% endblock %}
